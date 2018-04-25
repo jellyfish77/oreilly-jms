@@ -44,9 +44,9 @@ public class Chat implements javax.jms.MessageListener {
 		System.out.print("Received message from Topic: ");
 		try {
 			TextMessage textMessage = (TextMessage) message;
-			System.out.println(textMessage.getText());
+			System.out.println(textMessage.getText());			
 		} 
-		catch (JMSException jmse) { jmse.printStackTrace(); }
+		catch (JMSException jmse) { jmse.printStackTrace(); }		
 	}
 	
 	/* Create and Send Message Using Publisher */
