@@ -41,7 +41,7 @@ public class Chat implements javax.jms.MessageListener {
 	
 	/* Receive Messages From Topic Subscriber */
 	public void onMessage(Message message) {
-		System.out.println("Received message from Topic...");
+		System.out.print("Received message from Topic: ");
 		try {
 			TextMessage textMessage = (TextMessage) message;
 			System.out.println(textMessage.getText());
@@ -53,7 +53,7 @@ public class Chat implements javax.jms.MessageListener {
 	protected void writeMessage(String text) throws JMSException {
 		TextMessage message = pubSession.createTextMessage();
 		message.setText(username+": "+text);
-		System.out.println(" [publishing message ("+text+") to topic specified]");
+		System.out.println("Publishing message ("+text+") to topic specified...");
 		publisher.publish(message);
 	}
 		/* Close the JMS Connection */
