@@ -298,5 +298,6 @@
 	<classpathentry kind="lib" path="/home/otto/glassfish5/glassfish/modules/work-management.jar"/>
 	<classpathentry kind="lib" path="/home/otto/glassfish5/glassfish/modules/yasson.jar"/>
 	<classpathentry kind="lib" path="/home/otto/glassfish5/glassfish/lib/gf-client.jar"/>
+	<classpathentry kind="lib" path="/home/otto/eclipse-workspace/lib/activemq-all-5.15.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

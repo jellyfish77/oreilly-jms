@@ -12,29 +12,39 @@ public class Chat implements javax.jms.MessageListener {
 	
 	/* Constructor used to Initialize Chat */
 	public Chat(String topicFactory, String topicName, String username)	throws Exception {
-		// Obtain a JNDI connection using the jndi.properties file
+
+		// Initialize environment of InitalContext from jndi.properties file
 		InitialContext ctx = new InitialContext();
-		// Look up a JMS connection factory and create the connection
+		
+		// Look up a JMS connection factory 
+		//   
 		TopicConnectionFactory conFactory = (TopicConnectionFactory)ctx.lookup(topicFactory);
+		// Create a JNDI connection
 		TopicConnection connection = conFactory.createTopicConnection();
+		
 		// Create two JMS session objects
 		TopicSession pubSession = connection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
 		TopicSession subSession = connection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
+		
 		// Look up a JMS topic
 		Topic chatTopic = (Topic)ctx.lookup(topicName);
+		
 		// Create a JMS publisher and subscriber. The additional parameters
 		// on the createSubscriber are a message selector (null) and a true
 		// value for the noLocal flag indicating that messages produced from
 		// this publisher should not be consumed by this publisher.
 		TopicPublisher publisher = pubSession.createPublisher(chatTopic);
 		TopicSubscriber subscriber = subSession.createSubscriber(chatTopic, null, true);
+		
 		// Set a JMS message listener
 		subscriber.setMessageListener(this);
+		
 		// Initialize the Chat application variables
 		this.connection = connection;
 		this.pubSession = pubSession;
 		this.publisher = publisher;
 		this.username = username;
+		
 		// Start the JMS connection; allows messages to be delivered
 		connection.start();
 	}
@@ -63,11 +73,13 @@ public class Chat implements javax.jms.MessageListener {
 		/* Run the Chat Client */
 	public static void main(String [] args) {
 		try {
-			if (args.length!=3)
-				System.out.println("Factory, Topic, or username missing");
-			// args[0]=topicFactory; args[1]=topicName; args[2]=username
+			//if (args.length!=3)
+				//System.out.println("Factory, Topic, or username missing");
+			//args[0]=topicFactory; args[1]=topicName; args[2]=username
 			//Chat chat = new Chat(args[0],args[1],args[2]);
-			Chat chat = new Chat("TopicConnectionFactory","testTopic","");
+			//Chat chat = new Chat("TopicConnectionFactory","testTopic","");
+			Chat chat = new Chat("OttoActiveMQTopicConnectionFactory","testTopic","");
+			
 			// Read from command line
 			BufferedReader commandLine = new
 			java.io.BufferedReader(new InputStreamReader(System.in));
