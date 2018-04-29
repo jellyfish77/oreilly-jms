@@ -14,6 +14,7 @@ public class Chat implements javax.jms.MessageListener {
 	public Chat(String topicFactory, String topicName, String username)	throws Exception {
 
 		// Initialize environment of InitalContext from jndi.properties file
+		// InitialContext will load (and merge) all jndi.properties files in root of classpath
 		InitialContext ctx = new InitialContext();
 		
 		// Look up a JMS connection factory 
