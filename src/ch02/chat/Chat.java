@@ -51,10 +51,11 @@ public class Chat implements javax.jms.MessageListener {
 	
 	/* Receive Messages From Topic Subscriber */
 	public void onMessage(Message message) {
-		System.out.print("Received message from Topic: ");
+		//System.out.print("Received message from Topic: ");
 		try {
-			TextMessage textMessage = (TextMessage) message;
-			System.out.println(textMessage.getText());			
+			TextMessage textMessage = (TextMessage) message;			
+			System.out.println("\n" + textMessage.getText());			
+			System.out.print(this.username + "*: ");
 		} 
 		catch (JMSException jmse) { jmse.printStackTrace(); }		
 	}
@@ -63,7 +64,7 @@ public class Chat implements javax.jms.MessageListener {
 	protected void writeMessage(String text) throws JMSException {
 		TextMessage message = pubSession.createTextMessage();
 		message.setText(username+": "+text);
-		System.out.println("Publishing message ("+text+") to topic specified...");
+		//System.out.println("Publishing message ("+text+") to topic specified...");
 		publisher.publish(message);
 	}
 		/* Close the JMS Connection */
@@ -73,18 +74,23 @@ public class Chat implements javax.jms.MessageListener {
 		/* Run the Chat Client */
 	public static void main(String [] args) {
 		try {
-			//if (args.length!=3)
-				//System.out.println("Factory, Topic, or username missing");
-			//args[0]=topicFactory; args[1]=topicName; args[2]=username
-			//Chat chat = new Chat(args[0],args[1],args[2]);
-			//Chat chat = new Chat("TopicConnectionFactory","testTopic","");
-			Chat chat = new Chat("OttoActiveMQTopicConnectionFactory","testTopic","");
+			Chat chat;
+			if (args.length!=3) {
+				// use default arguments
+				System.out.println("Factory, Topic, or username missing, using defaults...");
+				chat = new Chat("OttoActiveMQTopicConnectionFactory","testTopic","");
+			} else {
+				// use arguments specified							
+				//args[0]=topicFactory; args[1]=topicName; args[2]=username
+				chat = new Chat(args[0],args[1],args[2]);
+			}
 			
 			// Read from command line
 			BufferedReader commandLine = new
 			java.io.BufferedReader(new InputStreamReader(System.in));
 			// Loop until the word "exit" is typed
 			while(true) {
+				System.out.print(chat.username + "*: ");
 				String s = commandLine.readLine();
 				if (s.equalsIgnoreCase("exit")) {
 					chat.close();
