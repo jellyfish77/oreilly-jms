@@ -4,6 +4,7 @@ import java.io.*;
 import javax.jms.*;
 import javax.naming.*;
 
+/* Connects to the topic and receives and delivers messages */
 public class Chat implements javax.jms.MessageListener {
 	private TopicSession pubSession;
 	private TopicPublisher publisher;
@@ -11,6 +12,9 @@ public class Chat implements javax.jms.MessageListener {
 	private String username;
 	
 	/* Constructor used to Initialize Chat */
+	/* Connects to the topic and set up the TopicPublisher and TopicSubscribers for 
+	 * delivering and receiving messages.
+	 */
 	public Chat(String topicFactory, String topicName, String username)	throws Exception {
 
 		// Initialize environment of InitalContext from jndi.properties file
@@ -72,7 +76,7 @@ public class Chat implements javax.jms.MessageListener {
 	public void close() throws JMSException {
 		connection.close();
 	}
-		/* Run the Chat Client */
+		/* Bootstrap the chat client and provide a command-line interface */
 	public static void main(String [] args) {
 		try {
 			Chat chat;
@@ -86,9 +90,9 @@ public class Chat implements javax.jms.MessageListener {
 				chat = new Chat(args[0],args[1],args[2]);
 			}
 			
-			// Read from command line
-			BufferedReader commandLine = new
-			java.io.BufferedReader(new InputStreamReader(System.in));
+			// Read text typed at the command line and pass it to the Chat instance using
+			// the instance’s writeMessage() method
+			BufferedReader commandLine = new java.io.BufferedReader(new InputStreamReader(System.in));
 			// Loop until the word "exit" is typed
 			while(true) {
 				System.out.print(chat.username + "*: ");
