@@ -1,4 +1,4 @@
-package ch02;
+package ch02.chat;
 
 import java.io.*;
 import javax.jms.*;
