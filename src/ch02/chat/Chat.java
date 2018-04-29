@@ -83,7 +83,8 @@ public class Chat implements javax.jms.MessageListener {
 			if (args.length!=3) {
 				// use default arguments
 				System.out.println("Factory, Topic, or username missing, using defaults...");
-				chat = new Chat("OttoActiveMQTopicConnectionFactory","testTopic","");
+				chat = new Chat("TopicConnectionFactory","testTopic",""); // Glassfish JMS objects
+				//chat = new Chat("OttoActiveMQTopicConnectionFactory","testTopic","");
 			} else {
 				// use arguments specified							
 				//args[0]=topicFactory; args[1]=topicName; args[2]=username
