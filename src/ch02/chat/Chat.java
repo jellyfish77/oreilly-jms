@@ -3,6 +3,7 @@ package ch02.chat;
 import java.io.*;
 import javax.jms.*;
 import javax.naming.*;
+import java.util.Properties;
 
 /* Connects to the topic and receives and delivers messages */
 public class Chat implements javax.jms.MessageListener {
@@ -21,10 +22,45 @@ public class Chat implements javax.jms.MessageListener {
 		// InitialContext will load (and merge) all jndi.properties files in root of classpath
 		InitialContext ctx = new InitialContext();
 		
-		// Look up a JMS connection factory 
-		//   
+		// Look up a JMS connection factory object   
 		TopicConnectionFactory conFactory = (TopicConnectionFactory)ctx.lookup(topicFactory);
-		// Create a JNDI connection
+		
+		// Create a JNDI connection to JMS Provider
+		TopicConnection connection = conFactory.createTopicConnection();
+		
+		// Create two JMS session objects
+		TopicSession pubSession = connection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
+		TopicSession subSession = connection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
+		
+		// Look up a JMS topic
+		Topic chatTopic = (Topic)ctx.lookup(topicName);
+		
+		// Create a JMS publisher and subscriber. The additional parameters
+		// on the createSubscriber are a message selector (null) and a true
+		// value for the noLocal flag indicating that messages produced from
+		// this publisher should not be consumed by this publisher.
+		TopicPublisher publisher = pubSession.createPublisher(chatTopic);
+		TopicSubscriber subscriber = subSession.createSubscriber(chatTopic, null, true);
+		
+		// Set a JMS message listener
+		subscriber.setMessageListener(this);
+		
+		// Initialize the Chat application variables
+		this.connection = connection;
+		this.pubSession = pubSession;
+		this.publisher = publisher;
+		this.username = username;
+		
+		// Start the JMS connection; allows messages to be delivered
+		connection.start();
+	}
+	
+	public Chat(InitialContext ctx, String topicFactory, String topicName, String username)	throws Exception {	
+		
+		// Look up a JMS connection factory object   
+		TopicConnectionFactory conFactory = (TopicConnectionFactory)ctx.lookup(topicFactory);
+		
+		// Create a JNDI connection to JMS Provider
 		TopicConnection connection = conFactory.createTopicConnection();
 		
 		// Create two JMS session objects
@@ -80,14 +116,23 @@ public class Chat implements javax.jms.MessageListener {
 	public static void main(String [] args) {
 		try {
 			Chat chat;
+						
 			if (args.length!=3) {
 				// use default arguments
 				System.out.println("Factory, Topic, or username missing, using defaults...");
-				chat = new Chat("TopicConnectionFactory","testTopic",""); // Glassfish JMS objects
+				Properties env = new Properties();			
+				env.put(Context.INITIAL_CONTEXT_FACTORY,"com.sun.enterprise.naming.SerialInitContextFactory");
+				env.put(Context.PROVIDER_URL, "tcp://localhost:4848");
+				InitialContext ctx = new InitialContext(env);
+				chat = new Chat(ctx, args[0],args[1],args[2]);
+				
+				//chat = new Chat("TopicConnectionFactory","testTopic",""); // Glassfish JMS objects
 				//chat = new Chat("OttoActiveMQTopicConnectionFactory","testTopic","");
 			} else {
 				// use arguments specified							
 				//args[0]=topicFactory; args[1]=topicName; args[2]=username
+				//InitialContext ctx = new InitialContext();
+				//chat = new Chat();
 				chat = new Chat(args[0],args[1],args[2]);
 			}
 			
