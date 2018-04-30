@@ -57,17 +57,19 @@ public class Chat implements javax.jms.MessageListener {
 	
 	public Chat(InitialContext ctx, String topicFactory, String topicName, String username)	throws Exception {	
 		
-		// Look up a JMS connection factory object   
+		// look up the Topic ConnectionFactory object in the messaging server’s naming service
+		// an administered object configured by JMS messaging server administrator
 		TopicConnectionFactory conFactory = (TopicConnectionFactory)ctx.lookup(topicFactory);
 		
 		// Create a JNDI connection to JMS Provider
+		// The TopicConnection represents a connection to the message server.
 		TopicConnection connection = conFactory.createTopicConnection();
 		
 		// Create two JMS session objects
 		TopicSession pubSession = connection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
 		TopicSession subSession = connection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
 		
-		// Look up a JMS topic
+		// Look up a JMS topic		
 		Topic chatTopic = (Topic)ctx.lookup(topicName);
 		
 		// Create a JMS publisher and subscriber. The additional parameters
