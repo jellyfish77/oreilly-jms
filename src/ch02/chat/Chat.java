@@ -57,8 +57,9 @@ public class Chat implements javax.jms.MessageListener {
 	
 	public Chat(InitialContext ctx, String topicFactory, String topicName, String username)	throws Exception {	
 		
-		// look up the Topic ConnectionFactory object in the messaging server’s naming service
-		// an administered object configured by JMS messaging server administrator
+		// Look up the Topic ConnectionFactory object in the messaging server’s naming service.
+		// This is an administered object configured by JMS messaging server administrator, used
+		// to manufacture connections to a message server.
 		TopicConnectionFactory conFactory = (TopicConnectionFactory)ctx.lookup(topicFactory);
 		
 		// Create a JNDI connection to JMS Provider
@@ -88,8 +89,11 @@ public class Chat implements javax.jms.MessageListener {
 		this.publisher = publisher;
 		this.username = username;
 		
-		// Start the JMS connection; allows messages to be delivered
+		// Start the JMS connection, turning the inbound flow of messages “on,” allowing messages to be
+		// received by the client.
+		// Messages start to flow in from the topic as soon as start() is invoked.
 		connection.start();
+		// The stop() method blocks the flow of inbound messages until the start() method is invoked again.
 	}
 	
 	/* Receive Messages From Topic Subscriber */
@@ -112,6 +116,10 @@ public class Chat implements javax.jms.MessageListener {
 	}
 		/* Close the JMS Connection */
 	public void close() throws JMSException {
+		// This should be done when a client is finished using the TopicConnection; closing
+		// the connection conserves resources on the client and server.
+		// Closing a TopicConnection closes all the objects associated with the connection,
+		// including the TopicSession, TopicPublisher, and TopicSubscriber.
 		connection.close();
 	}
 		/* Bootstrap the chat client and provide a command-line interface */
