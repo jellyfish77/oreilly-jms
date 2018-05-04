@@ -66,7 +66,13 @@ public class Chat implements javax.jms.MessageListener {
 		// The TopicConnection represents a connection to the message server.
 		TopicConnection connection = conFactory.createTopicConnection();
 		
-		// Create two JMS session objects
+		// A TopicSession object is a factory for creating Message, TopicPublisher, and Topic Subscriber objects
+		// It is also used as the transactional unit of work within JMS
+		// A client can create multiple TopicSession objects to provide more granular control over publishers, subscribers, 
+		// and their associated transactions.
+		// A transacted Session (bool param) automatically manages outgoing and incoming messages within a transaction
+		// An acknowledgment (param) is a notification to the message server that the client has received the message.
+		// AUTO_ACKNOWLEDGE means that the message is automatically acknowledged after it is received by the client.
 		TopicSession pubSession = connection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
 		TopicSession subSession = connection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
 		
