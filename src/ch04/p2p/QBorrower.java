@@ -20,8 +20,12 @@ public class QBorrower {
 			// Create the JMS Session
 			qSession = qConnect.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
 			// Lookup the request and response queues
-			requestQ = (Queue) ctx.lookup(requestQueue);
+			System.out.print("Look up " + requestQueue);
+			//requestQ = (Queue) ctx.lookup(requestQueue);
+			System.out.println(" [OK]");
+			System.out.print("Look up " + responseQueue);
 			responseQ = (Queue) ctx.lookup(responseQueue);
+			//System.out.println(" [OK]");
 			// Now that setup is complete, start the Connection
 			qConnect.start();
 		} catch (JMSException jmse) {
