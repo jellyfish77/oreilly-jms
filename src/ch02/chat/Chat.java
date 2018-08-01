@@ -16,46 +16,17 @@ public class Chat implements javax.jms.MessageListener {
 	/* Connects to the topic and set up the TopicPublisher and TopicSubscribers for 
 	 * delivering and receiving messages.
 	 */
-	public Chat(String topicFactory, String topicName, String username)	throws Exception {
-
-		// Initialize environment of InitalContext from jndi.properties file
-		// InitialContext will load (and merge) all jndi.properties files in root of classpath
-		InitialContext ctx = new InitialContext();
-		
-		// Look up a JMS connection factory object   
-		TopicConnectionFactory conFactory = (TopicConnectionFactory)ctx.lookup(topicFactory);
-		
-		// Create a JNDI connection to JMS Provider
-		TopicConnection connection = conFactory.createTopicConnection();
-		
-		// Create two JMS session objects
-		TopicSession pubSession = connection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
-		TopicSession subSession = connection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
-		
-		// Look up a JMS topic
-		Topic chatTopic = (Topic)ctx.lookup(topicName);
-		
-		// Create a JMS publisher and subscriber. The additional parameters
-		// on the createSubscriber are a message selector (null) and a true
-		// value for the noLocal flag indicating that messages produced from
-		// this publisher should not be consumed by this publisher.
-		TopicPublisher publisher = pubSession.createPublisher(chatTopic);
-		TopicSubscriber subscriber = subSession.createSubscriber(chatTopic, null, true);
-		
-		// Set a JMS message listener
-		subscriber.setMessageListener(this);
-		
-		// Initialize the Chat application variables
-		this.connection = connection;
-		this.pubSession = pubSession;
-		this.publisher = publisher;
-		this.username = username;
-		
-		// Start the JMS connection; allows messages to be delivered
-		connection.start();
-	}
-	
 	public Chat(InitialContext ctx, String topicFactory, String topicName, String username)	throws Exception {	
+		
+		// A context is required by the JMS API to lookup the ConnectionFactory and Destination (Topic or Queue)
+		// from the JMS provider (i.e. GlasFish or Active MQ). 		
+			
+		if (ctx==null) {			
+			// A Context has an environment (effectively hashtable of properties)			// 
+			// InitialContext() will load (and merge) all jndi.properties files in root of classpath
+			ctx = new InitialContext();			
+		}
+			
 		
 		// Look up the Topic ConnectionFactory object in the messaging server’s naming service.
 		// This is an administered object configured by JMS messaging server administrator, used
@@ -99,9 +70,9 @@ public class Chat implements javax.jms.MessageListener {
 		// received by the client.
 		// Messages start to flow in from the topic as soon as start() is invoked.
 		connection.start();
-		// The stop() method blocks the flow of inbound messages until the start() method is invoked again.
+		// The stop() method blocks the flow of inbound messages until the start() method is invoked again.		
 	}
-	
+			
 	/* Receive Messages From Topic Subscriber */
 	public void onMessage(Message message) {
 		//System.out.print("Received message from Topic: ");
@@ -149,7 +120,8 @@ public class Chat implements javax.jms.MessageListener {
 				//args[0]=topicFactory; args[1]=topicName; args[2]=username
 				//InitialContext ctx = new InitialContext();
 				//chat = new Chat();
-				chat = new Chat(args[0],args[1],args[2]);
+				//chat = new Chat(args[0],args[1],args[2]);
+				chat = new Chat(null, args[0],args[1],args[2]);
 			}
 			
 			// Read text typed at the command line and pass it to the Chat instance using
