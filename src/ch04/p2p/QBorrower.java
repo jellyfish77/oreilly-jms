@@ -84,6 +84,10 @@ public class QBorrower {
 			System.out.println("java QBorrower factory requestQueue responseQueue");
 			System.exit(0);
 		}
+		System.out.println("Configuration: ");
+		System.out.println("CF: " + queuecf);
+		System.out.println("Request Q: " + requestq);
+		System.out.println("Response Q: " + responseq);
 		QBorrower borrower = new QBorrower(queuecf, requestq, responseq);
 		try {
 			// Read all standard input and send it as a message

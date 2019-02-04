@@ -86,6 +86,9 @@ public class QLender implements MessageListener {
 			System.out.println("java QLender factory request_queue");
 			System.exit(0);
 		}
+		System.out.println("Configuration: ");
+		System.out.println("CF: " + queuecf);
+		System.out.println("Request Q: " + requestq);		
 		QLender lender = new QLender(queuecf, requestq);
 		try {
 			// Run until enter is pressed
